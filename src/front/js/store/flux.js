@@ -25,23 +25,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 			);
 		},
 		login: (formData, navigate) => {
-		  fetch(
-			"https://vigilant-space-sniffle-x59jx96wrvv4c9jr-3001.app.github.dev/api/login",
-			{
-			  method: "POST",
-			  headers: { "Content-Type": "application/json" },
-			  body:  JSON.stringify(formData),
-			}
-		  )
-			.then((response) => response.json())
-			.then((data) => {
-			  console.log(data);
-			  setStore({ token: data });
-			  sessionStorage.setItem("token", JSON.stringify(data));
-			  navigate.push("/Private");
-			  window.location.reload();
+			fetch("https://vigilant-space-sniffle-x59jx96wrvv4c9jr-3001.app.github.dev/api/login", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(formData),
 			})
-			.catch((error) => console.log("Login Error", error));
+			.then((response) => {
+				if (!response.ok) {
+					return response.json().then(data => { throw new Error(data.msg) });
+				}
+				return response.json(); 
+			})
+			.then((data) => {
+				console.log(data);
+				setStore({ token: data });
+				sessionStorage.setItem("token", JSON.stringify(data));
+				navigate("/Private");
+				window.location.reload();
+			})
+			.catch((error) => {
+				console.log("Login Error", error)
+			alert(error)
+		});
 		},
 		logout: (navigate) => {
 		  sessionStorage.clear();

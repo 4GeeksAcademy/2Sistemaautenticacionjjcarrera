@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
 import { Navigate } from "react-router-dom";
+import background from "../../img/fondo3.jpg";
 
 export const Private = () => {
   const { actions } = useContext(Context);

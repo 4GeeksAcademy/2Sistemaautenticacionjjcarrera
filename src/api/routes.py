@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
-
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 
 api = Blueprint('api', __name__)
@@ -26,7 +27,8 @@ def signup():
     exist = User.query.filter_by(email=body_request["email"]).first()
     if exist:
         return jsonify({"msg": "Ya existe un registro con este email"}), 400
-    new_user = User (email=body_request["email"],
+    new_user = User (id=body_request["id"],
+                     email=body_request["email"],
                      password=body_request["password"]) 
     db.session.add(new_user)
     db.session.commit()
@@ -39,7 +41,7 @@ def login():
               email=body_request["email"], password=body_request["password"]).first()
        if not exist:
               return jsonify ({"msg": "Email o Password son Incorrectos"}), 400
-       token = created_access_token(identity=str(exist.id))
+       token = create_access_token(identity=str(exist.id))
        return jsonify({"token": token}), 200
 
 
